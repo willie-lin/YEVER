@@ -1,4 +1,4 @@
-module YEVER
+module github.com/willie-lin/YEVER
 
 go 1.17
 

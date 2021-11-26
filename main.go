@@ -1,9 +1,9 @@
 package main
 
 import (
+	"YEVER/configs"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/willie-lin/trivy-scan-images/configs"
 
 	"net/http"
 )
@@ -49,11 +49,10 @@ func main() {
 	//
 	//fmt.Println(viper.GetString("database.password"))
 
-
 	// Server
 	// Routes
 	e.GET("/", hello)
-	e.GET("/user", configs.TestGoHarborClient())
+	//e.GET("/user", configs.TestGoHarborClient())
 
 	// Start server
 	e.Logger.Fatal(e.Start(":2022"))
