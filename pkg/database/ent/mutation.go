@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/predicate"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/user"
+	"github.com/willie-lin/YEVER/pkg/database/ent/predicate"
+	"github.com/willie-lin/YEVER/pkg/database/ent/user"
 
 	"entgo.io/ent"
 )

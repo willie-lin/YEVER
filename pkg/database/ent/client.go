@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/migrate"
+	"github.com/willie-lin/YEVER/pkg/database/ent/migrate"
 
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/image"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/user"
+	"github.com/willie-lin/YEVER/pkg/database/ent/image"
+	"github.com/willie-lin/YEVER/pkg/database/ent/user"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"

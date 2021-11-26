@@ -5,9 +5,9 @@ package enttest
 import (
 	"context"
 
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent"
+	"github.com/willie-lin/YEVER/pkg/database/ent"
 	// required by schema hooks.
-	_ "github.com/willie-lin/trivy-scan-images/pkg/database/ent/runtime"
+	_ "github.com/willie-lin/YEVER/pkg/database/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/image"
+	"github.com/willie-lin/YEVER/pkg/database/ent/image"
 )
 
 // Image is the model entity for the Image schema.

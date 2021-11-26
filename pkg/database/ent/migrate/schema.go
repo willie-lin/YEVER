@@ -41,6 +41,9 @@ var (
 )
 
 func init() {
+	ImagesTable.Annotation = &entsql.Annotation{
+		Table: "images",
+	}
 	UsersTable.Annotation = &entsql.Annotation{
 		Table: "users",
 	}

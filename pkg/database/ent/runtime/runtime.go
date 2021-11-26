@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in github.com/willie-lin/trivy-scan-images/pkg/database/ent/runtime.go
+// The schema-stitching logic is generated in github.com/willie-lin/YEVER/pkg/database/ent/runtime.go
 
 const (
 	Version = "v0.9.1"                                          // Version of ent codegen.

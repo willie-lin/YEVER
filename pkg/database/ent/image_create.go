@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/image"
+	"github.com/willie-lin/YEVER/pkg/database/ent/image"
 )
 
 // ImageCreate is the builder for creating a Image entity.

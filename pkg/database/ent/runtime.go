@@ -5,8 +5,8 @@ package ent
 import (
 	"time"
 
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/schema"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/user"
+	"github.com/willie-lin/YEVER/pkg/database/ent/schema"
+	"github.com/willie-lin/YEVER/pkg/database/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code

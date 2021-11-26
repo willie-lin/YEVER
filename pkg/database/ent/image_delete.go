@@ -9,8 +9,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/image"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/predicate"
+	"github.com/willie-lin/YEVER/pkg/database/ent/image"
+	"github.com/willie-lin/YEVER/pkg/database/ent/predicate"
 )
 
 // ImageDelete is the builder for deleting a Image entity.

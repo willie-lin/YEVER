@@ -1,9 +1,9 @@
 package main
 
 import (
-	"YEVER/configs"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/willie-lin/YEVER/configs"
 
 	"net/http"
 )

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/user"
+	"github.com/willie-lin/YEVER/pkg/database/ent/user"
 )
 
 // User is the model entity for the User schema.

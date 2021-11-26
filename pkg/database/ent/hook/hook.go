@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent"
+	"github.com/willie-lin/YEVER/pkg/database/ent"
 )
 
 // The ImageFunc type is an adapter to allow the use of ordinary

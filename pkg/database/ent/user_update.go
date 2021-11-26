@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/predicate"
-	"github.com/willie-lin/trivy-scan-images/pkg/database/ent/user"
+	"github.com/willie-lin/YEVER/pkg/database/ent/predicate"
+	"github.com/willie-lin/YEVER/pkg/database/ent/user"
 )
 
 // UserUpdate is the builder for updating User entities.
