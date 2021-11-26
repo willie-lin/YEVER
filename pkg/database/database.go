@@ -62,7 +62,7 @@ func NewClient() (*ent.Client, error) {
 
 func AutoMigration(client *ent.Client, ctx context.Context) {
 	log, _ := zap.NewDevelopment()
-	if err := client.Schema.Create(ctx); err != nil {
+	if err := client.Schema.Create(ctx, migrate.WithGlobalUniqueID(true)); err != nil {
 		log.Fatal("failed creating schema resources: %v", zap.Error(err))
 		//log.Fatalf("failed creating schema resources: %v", err)
 	}

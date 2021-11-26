@@ -5,6 +5,7 @@ package ent
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/willie-lin/YEVER/pkg/database/ent/schema"
 	"github.com/willie-lin/YEVER/pkg/database/ent/user"
 )
@@ -15,26 +16,36 @@ import (
 func init() {
 	userFields := schema.User{}.Fields()
 	_ = userFields
+	// userDescUUID is the schema descriptor for uuid field.
+	userDescUUID := userFields[0].Descriptor()
+	// user.DefaultUUID holds the default value on creation for the uuid field.
+	user.DefaultUUID = userDescUUID.Default.(func() uuid.UUID)
 	// userDescName is the schema descriptor for name field.
-	userDescName := userFields[0].Descriptor()
-	// user.DefaultName holds the default value on creation for the name field.
-	user.DefaultName = userDescName.Default.(string)
+	userDescName := userFields[1].Descriptor()
 	// user.NameValidator is a validator for the "name" field. It is called by the builders before save.
 	user.NameValidator = userDescName.Validators[0].(func(string) error)
-	// userDescText is the schema descriptor for text field.
-	userDescText := userFields[1].Descriptor()
-	// user.DefaultText holds the default value on creation for the text field.
-	user.DefaultText = userDescText.Default.(string)
-	// user.TextValidator is a validator for the "text" field. It is called by the builders before save.
-	user.TextValidator = func() func(string) error {
-		validators := userDescText.Validators
+	// userDescAge is the schema descriptor for age field.
+	userDescAge := userFields[2].Descriptor()
+	// user.AgeValidator is a validator for the "age" field. It is called by the builders before save.
+	user.AgeValidator = userDescAge.Validators[0].(func(int) error)
+	// userDescEmail is the schema descriptor for email field.
+	userDescEmail := userFields[4].Descriptor()
+	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
+	// userDescDescription is the schema descriptor for description field.
+	userDescDescription := userFields[5].Descriptor()
+	// user.DefaultDescription holds the default value on creation for the description field.
+	user.DefaultDescription = userDescDescription.Default.(string)
+	// user.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	user.DescriptionValidator = func() func(string) error {
+		validators := userDescDescription.Validators
 		fns := [...]func(string) error{
 			validators[0].(func(string) error),
 			validators[1].(func(string) error),
 		}
-		return func(text string) error {
+		return func(description string) error {
 			for _, fn := range fns {
-				if err := fn(text); err != nil {
+				if err := fn(description); err != nil {
 					return err
 				}
 			}
@@ -42,11 +53,11 @@ func init() {
 		}
 	}()
 	// userDescCreated is the schema descriptor for created field.
-	userDescCreated := userFields[2].Descriptor()
+	userDescCreated := userFields[6].Descriptor()
 	// user.DefaultCreated holds the default value on creation for the created field.
 	user.DefaultCreated = userDescCreated.Default.(func() time.Time)
 	// userDescUpdated is the schema descriptor for updated field.
-	userDescUpdated := userFields[3].Descriptor()
+	userDescUpdated := userFields[7].Descriptor()
 	// user.DefaultUpdated holds the default value on creation for the updated field.
 	user.DefaultUpdated = userDescUpdated.Default.(func() time.Time)
 	// user.UpdateDefaultUpdated holds the default value on update for the updated field.

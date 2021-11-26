@@ -22,8 +22,12 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "name", Type: field.TypeString, Size: 20, Default: "名無し"},
-		{Name: "text", Type: field.TypeString, Size: 200, Default: ""},
+		{Name: "oid", Type: field.TypeUUID},
+		{Name: "name", Type: field.TypeString, Unique: true, Size: 20},
+		{Name: "age", Type: field.TypeInt},
+		{Name: "password", Type: field.TypeString},
+		{Name: "email", Type: field.TypeString, Size: 120},
+		{Name: "description", Type: field.TypeString, Size: 200, Default: ""},
 		{Name: "created", Type: field.TypeTime},
 		{Name: "updated", Type: field.TypeTime},
 	}

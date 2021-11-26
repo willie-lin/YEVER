@@ -1,16 +1,20 @@
 package main
 
 import (
+	"context"
+	"fmt"
+	"github.com/bykof/gostradamus"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/willie-lin/YEVER/configs"
-
+	"github.com/willie-lin/YEVER/pkg/database"
+	"go.uber.org/zap"
 	"net/http"
 )
 
 func main() {
 
-	//log, _ := zap.NewDevelopment()
+	log, _ := zap.NewDevelopment()
 
 	e := echo.New()
 	// Middleware
@@ -25,27 +29,27 @@ func main() {
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
 
-	// 连接 数据库
+	//连接 数据库
 
-	//client, err := database.NewClient()
-	//if err != nil {
-	//	log.Fatal("opening ent client", zap.Error(err))
-	//	return
-	//}
-	//dateTime := gostradamus.Now()
-	//fmt.Println(dateTime)
-	//
-	//defer client.Close()
-	//ctx := context.Background()
-	//
-	////autoMigration := database.AutoMigration
+	client, err := database.NewClient()
+	if err != nil {
+		log.Fatal("opening ent client", zap.Error(err))
+		return
+	}
+	dateTime := gostradamus.Now()
+	fmt.Println(dateTime)
+
+	defer client.Close()
+	ctx := context.Background()
+
 	//autoMigration := database.AutoMigration
-	//autoMigration(client, ctx)
+	autoMigration := database.AutoMigration
+	autoMigration(client, ctx)
 	//
-	////debugMode := database.DebugMode
 	//debugMode := database.DebugMode
+	debugMode := database.DebugMode
 	//
-	//debugMode(err, client, ctx)
+	debugMode(err, client, ctx)
 	//
 	//fmt.Println(viper.GetString("database.password"))
 
