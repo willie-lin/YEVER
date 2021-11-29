@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/willie-lin/YEVER/pkg/database/ent"
+	"github.com/willie-lin/YEVER/pkg/utils"
 	"net/http"
 )
 
@@ -19,6 +21,7 @@ func (controller *Controller) CreateUser(c echo.Context) error {
 	// insert record
 
 	cc := controller.client.User.Create().SetDescription(user.Description)
+
 	if user.Name != "" {
 		cc.SetName(user.Name)
 	}
@@ -33,6 +36,18 @@ func (controller *Controller) CreateUser(c echo.Context) error {
 		cc.SetAge(user.Age)
 
 	}
+	if user.ID != "" {
+		cc.SetID(utils.UUID())
 
-	return nil
+	}
+
+	newUser, err := cc.Save(context.Background())
+	if err != nil {
+		c.Logger().Error("Insert: ", err)
+		return c.String(http.StatusBadRequest, "Save: "+err.Error())
+	}
+
+	c.Logger().Infof("inserted comment: %v", newUser.ID)
+	return c.NoContent(http.StatusCreated)
+
 }

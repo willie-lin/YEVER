@@ -25,6 +25,7 @@ func (User) Annotations() []schema.Annotation {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("id").Unique(),
 		field.UUID("uuid", uuid.UUID{}).
 			Default(uuid.New).
 			StorageKey("oid"),

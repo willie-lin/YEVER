@@ -34,8 +34,10 @@ func main() {
 	client, err := database.NewClient()
 	if err != nil {
 		log.Fatal("opening ent client", zap.Error(err))
-		return
+
 	}
+
+	//fmt.Println(client)
 	dateTime := gostradamus.Now()
 	fmt.Println(dateTime)
 
@@ -53,10 +55,13 @@ func main() {
 	//
 	//fmt.Println(viper.GetString("database.password"))
 
+	//controller := handler.Controller{client: }
+
 	// Server
 	// Routes
 	e.GET("/", hello)
 	//e.GET("/user", configs.TestGoHarborClient())
+	//e.POST("/user", )
 
 	// Start server
 	e.Logger.Fatal(e.Start(":2022"))
