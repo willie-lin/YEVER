@@ -23,6 +23,14 @@ func (controller *Controller) CreateUser(c echo.Context) error {
 		cc.SetName(user.Name)
 	}
 	if user.Password != "" {
+		cc.SetPassword(user.Password)
+
+	}
+	if user.Email != "" {
+		cc.SetEmail(user.Email)
+	}
+	if user.Age >= 0 {
+		cc.SetAge(user.Age)
 
 	}
 
