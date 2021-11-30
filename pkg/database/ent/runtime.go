@@ -32,8 +32,26 @@ func init() {
 	userDescEmail := userFields[5].Descriptor()
 	// user.EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	user.EmailValidator = userDescEmail.Validators[0].(func(string) error)
+	// userDescPhone is the schema descriptor for phone field.
+	userDescPhone := userFields[6].Descriptor()
+	// user.PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
+	user.PhoneValidator = func() func(string) error {
+		validators := userDescPhone.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(phone string) error {
+			for _, fn := range fns {
+				if err := fn(phone); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// userDescDescription is the schema descriptor for description field.
-	userDescDescription := userFields[6].Descriptor()
+	userDescDescription := userFields[7].Descriptor()
 	// user.DefaultDescription holds the default value on creation for the description field.
 	user.DefaultDescription = userDescDescription.Default.(string)
 	// user.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
@@ -53,11 +71,11 @@ func init() {
 		}
 	}()
 	// userDescCreated is the schema descriptor for created field.
-	userDescCreated := userFields[7].Descriptor()
+	userDescCreated := userFields[8].Descriptor()
 	// user.DefaultCreated holds the default value on creation for the created field.
 	user.DefaultCreated = userDescCreated.Default.(func() time.Time)
 	// userDescUpdated is the schema descriptor for updated field.
-	userDescUpdated := userFields[8].Descriptor()
+	userDescUpdated := userFields[9].Descriptor()
 	// user.DefaultUpdated holds the default value on creation for the updated field.
 	user.DefaultUpdated = userDescUpdated.Default.(func() time.Time)
 	// user.UpdateDefaultUpdated holds the default value on update for the updated field.

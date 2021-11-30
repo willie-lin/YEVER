@@ -23,6 +23,8 @@ const (
 	FieldPassword = "password"
 	// FieldEmail holds the string denoting the email field in the database.
 	FieldEmail = "email"
+	// FieldPhone holds the string denoting the phone field in the database.
+	FieldPhone = "phone"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldCreated holds the string denoting the created field in the database.
@@ -41,6 +43,7 @@ var Columns = []string{
 	FieldAge,
 	FieldPassword,
 	FieldEmail,
+	FieldPhone,
 	FieldDescription,
 	FieldCreated,
 	FieldUpdated,
@@ -65,6 +68,8 @@ var (
 	AgeValidator func(int) error
 	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
 	EmailValidator func(string) error
+	// PhoneValidator is a validator for the "phone" field. It is called by the builders before save.
+	PhoneValidator func(string) error
 	// DefaultDescription holds the default value on creation for the "description" field.
 	DefaultDescription string
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.

@@ -24,9 +24,11 @@ type User struct {
 	// Age holds the value of the "age" field.
 	Age int `json:"age,omitempty"`
 	// Password holds the value of the "password" field.
-	Password string `json:"password,omitempty"`
+	Password string `json:"-"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
+	// Phone holds the value of the "phone" field.
+	Phone string `json:"phone,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// Created holds the value of the "created" field.
@@ -42,7 +44,7 @@ func (*User) scanValues(columns []string) ([]interface{}, error) {
 		switch columns[i] {
 		case user.FieldAge:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldName, user.FieldPassword, user.FieldEmail, user.FieldDescription:
+		case user.FieldID, user.FieldName, user.FieldPassword, user.FieldEmail, user.FieldPhone, user.FieldDescription:
 			values[i] = new(sql.NullString)
 		case user.FieldCreated, user.FieldUpdated:
 			values[i] = new(sql.NullTime)
@@ -99,6 +101,12 @@ func (u *User) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				u.Email = value.String
 			}
+		case user.FieldPhone:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field phone", values[i])
+			} else if value.Valid {
+				u.Phone = value.String
+			}
 		case user.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
@@ -151,10 +159,11 @@ func (u *User) String() string {
 	builder.WriteString(u.Name)
 	builder.WriteString(", age=")
 	builder.WriteString(fmt.Sprintf("%v", u.Age))
-	builder.WriteString(", password=")
-	builder.WriteString(u.Password)
+	builder.WriteString(", password=<sensitive>")
 	builder.WriteString(", email=")
 	builder.WriteString(u.Email)
+	builder.WriteString(", phone=")
+	builder.WriteString(u.Phone)
 	builder.WriteString(", description=")
 	builder.WriteString(u.Description)
 	builder.WriteString(", created=")

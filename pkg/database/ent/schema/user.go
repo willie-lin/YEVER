@@ -27,23 +27,14 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").Unique(),
 		field.UUID("uuid", uuid.UUID{}).Default(uuid.New).StorageKey("oid"),
-		field.String("name").
-			MaxLen(120).Unique(),
-		field.Int("age").
-			Positive(),
+		field.String("name").MaxLen(120).Unique(),
+		field.Int("age").Positive(),
 		field.String("password").Sensitive(),
-		field.String("email").
-			MaxLen(120),
-		field.String("description").
-			NotEmpty().
-			MaxLen(200).
-			Default(""),
-		field.Time("created").
-			Default(time.Now).
-			Immutable(),
-		field.Time("updated").
-			Default(time.Now).
-			UpdateDefault(time.Now),
+		field.String("email").MaxLen(120),
+		field.String("phone").MaxLen(13).MinLen(11),
+		field.String("description").NotEmpty().MaxLen(200).Default(""),
+		field.Time("created").Default(time.Now).Immutable(),
+		field.Time("updated").Default(time.Now).UpdateDefault(time.Now),
 	}
 }
 
