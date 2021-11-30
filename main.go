@@ -55,8 +55,6 @@ func main() {
 	//
 	//fmt.Println(viper.GetString("database.password"))
 
-	//controller := handler.Controller{client: }
-
 	// Server
 	// Routes
 	e.GET("/", hello)

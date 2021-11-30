@@ -23,7 +23,7 @@ type DatabaseCfg struct {
 
 func NewClient() (*ent.Client, error) {
 
-	fmt.Println(viper.GetString("database.username"))
+	//fmt.Println(viper.GetString("database.username"))
 	var dfg = &DatabaseCfg{
 		User:     viper.GetString("database.username"),
 		Password: viper.GetString("database.password"),
@@ -34,21 +34,23 @@ func NewClient() (*ent.Client, error) {
 	}
 
 	var client *ent.Client
+	//controller
 	var err error
 	//drv, err := sql.Open("mysql", "root:root1234@tcp(127.0.0.1:3306)/terminal?charset=utf8&parseTime=true")
+	//client :=
 	switch dfg.Type {
 	case "sqlite3":
-		fmt.Println(1111111)
+		//fmt.Println(1111111)
 		client, err = ent.Open(dfg.Type, fmt.Sprintf("file:%s?_busy_timeout=100000&_fk=1", dfg.DbName))
-		fmt.Println(client)
+		//fmt.Println(client)
 		if err != nil {
 			return client, fmt.Errorf("failed opening connection to sqlite: %v", err)
 		}
 	case "mysql":
-		fmt.Println(2222222)
+		//fmt.Println(2222222)
 		client, err = ent.Open(dfg.Type, fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=true",
 			dfg.User, dfg.Password, dfg.Host, dfg.Port, dfg.DbName))
-		fmt.Println(client)
+		//fmt.Println(client)
 		if err != nil {
 			return client, fmt.Errorf("failed opening connection to mysql: %v", err)
 		}

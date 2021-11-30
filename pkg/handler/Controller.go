@@ -4,5 +4,6 @@ import "github.com/willie-lin/YEVER/pkg/database/ent"
 
 //
 type Controller struct {
-	client *ent.Client
+	Client *ent.Client
+	Err    error
 }
