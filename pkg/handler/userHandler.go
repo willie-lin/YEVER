@@ -20,7 +20,7 @@ func (controller *Controller) CreateUser(c echo.Context) error {
 
 	// insert record
 
-	cc := controller.client.User.Create().SetDescription(user.Description)
+	cc := controller.Client.User.Create().SetDescription(user.Description)
 
 	if user.Name != "" {
 		cc.SetName(user.Name)

@@ -32,16 +32,20 @@ func main() {
 	//连接 数据库
 
 	client, err := database.NewClient()
+	//client, err = database.NewClients()
+
 	if err != nil {
 		log.Fatal("opening ent client", zap.Error(err))
 
 	}
 
+	//controller := database.Controller{Client: client, CTX: context.Background(),}
+
 	//fmt.Println(client)
 	dateTime := gostradamus.Now()
 	fmt.Println(dateTime)
 
-	defer client.Close()
+	//defer client.Close()
 	ctx := context.Background()
 
 	//autoMigration := database.AutoMigration
