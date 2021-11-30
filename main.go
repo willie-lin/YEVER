@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/willie-lin/YEVER/configs"
 	"github.com/willie-lin/YEVER/pkg/database"
+	"github.com/willie-lin/YEVER/pkg/handler"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -30,16 +31,14 @@ func main() {
 	}))
 
 	//连接 数据库
-
 	client, err := database.NewClient()
-	//client, err = database.NewClients()
-
+	//fmt.Println(client)
 	if err != nil {
 		log.Fatal("opening ent client", zap.Error(err))
-
+		return
 	}
 
-	//controller := database.Controller{Client: client, CTX: context.Background(),}
+	defer client.Close()
 
 	//fmt.Println(client)
 	dateTime := gostradamus.Now()
@@ -56,14 +55,17 @@ func main() {
 	debugMode := database.DebugMode
 	//
 	debugMode(err, client, ctx)
-	//
-	//fmt.Println(viper.GetString("database.password"))
+
+	controller := &handler.Controller{Client: client}
 
 	// Server
+
 	// Routes
 	e.GET("/", hello)
-	//e.GET("/user", configs.TestGoHarborClient())
+	//e.POST("/user", handler.CreateUser(client))
+	//e.POST("/user", handler.FindUserByUsername(client))
 	//e.POST("/user", )
+	e.POST("/user", controller.InsertComment)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":2022"))
