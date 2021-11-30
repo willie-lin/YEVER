@@ -56,7 +56,7 @@ func main() {
 	//
 	debugMode(err, client, ctx)
 
-	//controller := &handler.Controller{Client: client}
+	controller := &handler.Controller{Client: client}
 
 	// Server
 
@@ -65,7 +65,7 @@ func main() {
 	e.POST("/users", handler.CreateUser(client))
 	//e.POST("/user", handler.FindUserByUsername(client))
 	//e.POST("/user", )
-	//e.POST("/user", controller.InsertComment)
+	e.POST("/user", controller.InsertComment)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":2022"))

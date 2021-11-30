@@ -6,21 +6,22 @@ import (
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/willie-lin/YEVER/pkg/database/ent"
+	"github.com/willie-lin/YEVER/pkg/database/ent/user"
 	"github.com/willie-lin/YEVER/pkg/utils"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	"unsafe"
 )
 
 type Controller struct {
 	Client *ent.Client
 }
 
+// CreateUser create user into user tables
 func CreateUser(client *ent.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
-
 		var user ent.User
-
 		// 接受json数组并解析绑定到user
 		log, _ := zap.NewDevelopment()
 		if err := json.NewDecoder(c.Request().Body).Decode(&user); err != nil {
@@ -28,29 +29,23 @@ func CreateUser(client *ent.Client) echo.HandlerFunc {
 			return err
 		}
 
+		// 加密原始密码
 		pwd, err := utils.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return err
 		}
-
 		user.Password = string(pwd)
-
 		cc := client.User.Create().SetID(utils.UUID())
-
 		if user.Name != "" {
 			cc.SetName(user.Name)
 		}
 		if user.Age != -1 {
 			cc.SetAge(user.Age)
 		}
-		//if user.Password != "" {
-		//	cc.SetPassword(string(newPsd))
-		//}
 
 		if user.Email != "" {
 			cc.SetEmail(user.Email)
 		}
-
 		if user.Phone != "" {
 			cc.SetPhone(user.Phone)
 		}
@@ -58,18 +53,34 @@ func CreateUser(client *ent.Client) echo.HandlerFunc {
 			cc.SetDescription(user.Description)
 		}
 		if user.Password != "" {
-			cc.SetPassword(user.Password)
+			//cc.SetPassword(user.Password)
+			cc.SetPassword(*(*string)(unsafe.Pointer(&pwd)))
 		}
-
 		// insert record
 		newUser, err := cc.Save(context.Background())
 		if err != nil {
 			c.Logger().Error("Insert: ", err)
 			return c.String(http.StatusBadRequest, "Save: "+err.Error())
 		}
-
 		c.Logger().Infof("inserted comment: %v", newUser.ID)
 		return c.NoContent(http.StatusCreated)
+	}
+}
+func GetAllUser(client *ent.Client) echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		//var user ent.User
+		log, _ := zap.NewDevelopment()
+
+		users, err := client.User.Query().Order(ent.Desc(user.FieldCreated)).Limit(10).All(context.Background())
+		if err != nil {
+			if ent.IsNotFound(err) {
+				log.Fatal("GetAll User Error: ", zap.Error(err))
+				return c.String(http.StatusBadRequest, "Get: "+err.Error())
+			}
+			return c.String(http.StatusNotFound, "Not Found")
+		}
+		return c.JSON(http.StatusOK, users)
 	}
 }
 
@@ -130,14 +141,17 @@ func (controller *Controller) InsertComment(c echo.Context) error {
 
 	cc := controller.Client.User.Create().SetDescription(user.Description)
 
+	// 加密原始密码
 	pwd, err := utils.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
+	fmt.Println(pwd)
+
 	user.Password = string(pwd)
 
-	fmt.Println(string(pwd))
+	//fmt.Println(string(pwd))
 
 	if user.Name != "" {
 		cc.SetName(user.Name)
@@ -158,6 +172,7 @@ func (controller *Controller) InsertComment(c echo.Context) error {
 	if user.Password != "" {
 
 		cc.SetPassword(user.Password)
+		//cc.SetPassword(*(*string)(unsafe.Pointer(&pwd)))
 		//cc.SetPassword(string(pwd))
 	}
 	if user.Phone != "" {
