@@ -62,10 +62,11 @@ func main() {
 
 	// Routes
 	e.GET("/", hello)
-	e.POST("/users", handler.CreateUser(client))
+	e.GET("/users", handler.GetAllUser(client))
+	e.POST("/user", handler.CreateUser(client))
 	//e.POST("/user", handler.FindUserByUsername(client))
 	//e.POST("/user", )
-	e.POST("/user", controller.InsertComment)
+	e.POST("/user1", controller.InsertComment)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":2022"))

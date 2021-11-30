@@ -72,7 +72,8 @@ func GetAllUser(client *ent.Client) echo.HandlerFunc {
 		//var user ent.User
 		log, _ := zap.NewDevelopment()
 
-		users, err := client.User.Query().Order(ent.Desc(user.FieldCreated)).Limit(10).All(context.Background())
+		users, err := client.User.Query().Order(ent.Desc(user.FieldCreated)).Limit(100).All(context.Background())
+		//users, err := client.User.Query().All(context.Background())
 		if err != nil {
 			if ent.IsNotFound(err) {
 				log.Fatal("GetAll User Error: ", zap.Error(err))
