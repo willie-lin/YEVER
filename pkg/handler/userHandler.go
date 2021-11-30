@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/willie-lin/YEVER/pkg/database/ent"
 	"github.com/willie-lin/YEVER/pkg/utils"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
 
@@ -115,6 +116,11 @@ func (controller *Controller) InsertComment(c echo.Context) error {
 
 	cc := controller.Client.User.Create().SetDescription(user.Description)
 
+	pwd, err := utils.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
 	if user.Name != "" {
 		cc.SetName(user.Name)
 	}
@@ -133,7 +139,7 @@ func (controller *Controller) InsertComment(c echo.Context) error {
 
 	}
 	if user.Password != "" {
-		cc.SetPassword(user.Password)
+		cc.SetPassword(string(pwd))
 	}
 
 	newUser, err := cc.Save(context.Background())
