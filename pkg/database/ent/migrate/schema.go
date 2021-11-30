@@ -27,8 +27,8 @@ var (
 		{Name: "age", Type: field.TypeInt},
 		{Name: "password", Type: field.TypeString},
 		{Name: "email", Type: field.TypeString, Size: 120},
-		{Name: "phone", Type: field.TypeString, Size: 13},
-		{Name: "description", Type: field.TypeString, Size: 200, Default: ""},
+		{Name: "phone", Type: field.TypeString, Size: 13, Default: "12345678910"},
+		{Name: "description", Type: field.TypeString, Size: 200, Default: "other"},
 		{Name: "created", Type: field.TypeTime},
 		{Name: "updated", Type: field.TypeTime},
 	}

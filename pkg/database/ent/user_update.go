@@ -71,6 +71,14 @@ func (uu *UserUpdate) SetPhone(s string) *UserUpdate {
 	return uu
 }
 
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (uu *UserUpdate) SetNillablePhone(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetPhone(*s)
+	}
+	return uu
+}
+
 // SetDescription sets the "description" field.
 func (uu *UserUpdate) SetDescription(s string) *UserUpdate {
 	uu.mutation.SetDescription(s)
@@ -335,6 +343,14 @@ func (uuo *UserUpdateOne) SetEmail(s string) *UserUpdateOne {
 // SetPhone sets the "phone" field.
 func (uuo *UserUpdateOne) SetPhone(s string) *UserUpdateOne {
 	uuo.mutation.SetPhone(s)
+	return uuo
+}
+
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillablePhone(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetPhone(*s)
+	}
 	return uuo
 }
 

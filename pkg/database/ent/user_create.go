@@ -57,6 +57,14 @@ func (uc *UserCreate) SetPhone(s string) *UserCreate {
 	return uc
 }
 
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePhone(s *string) *UserCreate {
+	if s != nil {
+		uc.SetPhone(*s)
+	}
+	return uc
+}
+
 // SetDescription sets the "description" field.
 func (uc *UserCreate) SetDescription(s string) *UserCreate {
 	uc.mutation.SetDescription(s)
@@ -179,6 +187,10 @@ func (uc *UserCreate) defaults() {
 	if _, ok := uc.mutation.UUID(); !ok {
 		v := user.DefaultUUID()
 		uc.mutation.SetUUID(v)
+	}
+	if _, ok := uc.mutation.Phone(); !ok {
+		v := user.DefaultPhone
+		uc.mutation.SetPhone(v)
 	}
 	if _, ok := uc.mutation.Description(); !ok {
 		v := user.DefaultDescription

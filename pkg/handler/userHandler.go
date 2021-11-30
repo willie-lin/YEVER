@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/willie-lin/YEVER/pkg/database/ent"
 	"github.com/willie-lin/YEVER/pkg/utils"
@@ -20,12 +21,6 @@ func CreateUser(client *ent.Client) echo.HandlerFunc {
 
 		var user ent.User
 
-		// bind request to user struct
-		//if err := c.Bind(&user); err != nil {
-		//	c.Logger().Error("Bind:", err)
-		//	return c.String(http.StatusBadRequest, "Bind: "+err.Error())
-		//}
-
 		// 接受json数组并解析绑定到user
 		log, _ := zap.NewDevelopment()
 		if err := json.NewDecoder(c.Request().Body).Decode(&user); err != nil {
@@ -33,44 +28,40 @@ func CreateUser(client *ent.Client) echo.HandlerFunc {
 			return err
 		}
 
-		newPsd, err := utils.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		pwd, err := utils.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if err != nil {
-			//fmt.Println("加密密码失败", err)
 			return err
 		}
+
+		user.Password = string(pwd)
 
 		cc := client.User.Create().SetID(utils.UUID())
 
 		if user.Name != "" {
 			cc.SetName(user.Name)
-		} else if user.Age >= 0 {
+		}
+		if user.Age != -1 {
 			cc.SetAge(user.Age)
-
-		} else if user.Password != "" {
-			cc.SetName(string(newPsd))
 		}
+		//if user.Password != "" {
+		//	cc.SetPassword(string(newPsd))
+		//}
 
-		// insert record
-
-		if user.Name != "" {
-			cc.SetName(user.Name)
-		}
-		if user.Password != "" {
-			cc.SetPassword(user.Password)
-
-		}
 		if user.Email != "" {
 			cc.SetEmail(user.Email)
 		}
-		if user.Age >= 0 {
-			cc.SetAge(user.Age)
 
+		if user.Phone != "" {
+			cc.SetPhone(user.Phone)
 		}
-		if user.ID != "" {
-			cc.SetID(utils.UUID())
-
+		if user.Description != "" {
+			cc.SetDescription(user.Description)
+		}
+		if user.Password != "" {
+			cc.SetPassword(user.Password)
 		}
 
+		// insert record
 		newUser, err := cc.Save(context.Background())
 		if err != nil {
 			c.Logger().Error("Insert: ", err)
@@ -79,7 +70,6 @@ func CreateUser(client *ent.Client) echo.HandlerFunc {
 
 		c.Logger().Infof("inserted comment: %v", newUser.ID)
 		return c.NoContent(http.StatusCreated)
-
 	}
 }
 
@@ -145,6 +135,10 @@ func (controller *Controller) InsertComment(c echo.Context) error {
 		return err
 	}
 
+	user.Password = string(pwd)
+
+	fmt.Println(string(pwd))
+
 	if user.Name != "" {
 		cc.SetName(user.Name)
 	}
@@ -160,13 +154,19 @@ func (controller *Controller) InsertComment(c echo.Context) error {
 	}
 	if user.ID != "" {
 		cc.SetID(utils.UUID())
-
 	}
 	if user.Password != "" {
-		cc.SetPassword(string(pwd))
+
+		cc.SetPassword(user.Password)
+		//cc.SetPassword(string(pwd))
+	}
+	if user.Phone != "" {
+		cc.SetPhone(user.Phone)
+
 	}
 
 	newUser, err := cc.Save(context.Background())
+	//fmt.Println(newUser.Password)
 	if err != nil {
 		c.Logger().Error("Insert: ", err)
 		return c.String(http.StatusBadRequest, "Save: "+err.Error())
