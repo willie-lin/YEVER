@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -24,16 +25,15 @@ func (User) Annotations() []schema.Annotation {
 // Fields of the User.
 func (User) Fields() []ent.Field {
 	return []ent.Field{
-		//field.String("id").Unique(),
-		//field.UUID("uuid", uuid.UUID{}).Default(uuid.New). StorageKey("oid"),
+		field.String("id").Unique(),
+		field.UUID("uuid", uuid.UUID{}).Default(uuid.New).StorageKey("oid"),
 		field.String("name").
-			MaxLen(20).Unique(),
-		//field.Int("age").
-		//	Positive(),
-		//field.String("password").
-		//	Sensitive(),
-		//field.String("email").
-		//	MaxLen(120),
+			MaxLen(120).Unique(),
+		field.Int("age").
+			Positive(),
+		field.String("password").Sensitive(),
+		field.String("email").
+			MaxLen(120),
 		field.String("description").
 			NotEmpty().
 			MaxLen(200).

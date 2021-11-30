@@ -4,6 +4,8 @@ package user
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -11,8 +13,16 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldUUID holds the string denoting the uuid field in the database.
+	FieldUUID = "oid"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldAge holds the string denoting the age field in the database.
+	FieldAge = "age"
+	// FieldPassword holds the string denoting the password field in the database.
+	FieldPassword = "password"
+	// FieldEmail holds the string denoting the email field in the database.
+	FieldEmail = "email"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
 	// FieldCreated holds the string denoting the created field in the database.
@@ -26,7 +36,11 @@ const (
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
+	FieldUUID,
 	FieldName,
+	FieldAge,
+	FieldPassword,
+	FieldEmail,
 	FieldDescription,
 	FieldCreated,
 	FieldUpdated,
@@ -43,8 +57,14 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultUUID holds the default value on creation for the "uuid" field.
+	DefaultUUID func() uuid.UUID
 	// NameValidator is a validator for the "name" field. It is called by the builders before save.
 	NameValidator func(string) error
+	// AgeValidator is a validator for the "age" field. It is called by the builders before save.
+	AgeValidator func(int) error
+	// EmailValidator is a validator for the "email" field. It is called by the builders before save.
+	EmailValidator func(string) error
 	// DefaultDescription holds the default value on creation for the "description" field.
 	DefaultDescription string
 	// DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
