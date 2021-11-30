@@ -21,7 +21,7 @@ type Controller struct {
 // CreateUser create user into user tables
 func CreateUser(client *ent.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var user ent.User
+		var user *ent.User
 		// 接受json数组并解析绑定到user
 		log, _ := zap.NewDevelopment()
 		if err := json.NewDecoder(c.Request().Body).Decode(&user); err != nil {
@@ -71,7 +71,6 @@ func GetAllUser(client *ent.Client) echo.HandlerFunc {
 
 		//var user ent.User
 		log, _ := zap.NewDevelopment()
-
 		users, err := client.User.Query().Order(ent.Desc(user.FieldCreated)).Limit(100).All(context.Background())
 		//users, err := client.User.Query().All(context.Background())
 		if err != nil {
@@ -86,6 +85,28 @@ func GetAllUser(client *ent.Client) echo.HandlerFunc {
 }
 
 // 根据用户名查找
+func FindUserByName(client *ent.Client) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var u *ent.User
+		// 接受json数组并解析绑定到user
+		log, _ := zap.NewDevelopment()
+		if err := json.NewDecoder(c.Request().Body).Decode(&u); err != nil {
+			log.Fatal("json decode error", zap.Error(err))
+			return err
+		}
+		us, err := client.User.Query().Where(user.NameEQ(u.Name)).Only(context.Background())
+		if err != nil {
+			if !ent.IsNotFound(err) {
+				c.Logger().Error("Get: ", err)
+				return c.String(http.StatusBadRequest, "Get: "+err.Error())
+			}
+			return c.String(http.StatusNotFound, "Not Found")
+		}
+
+		return c.JSON(http.StatusOK, us)
+	}
+}
+
 //func  (controller *Controller) FindUserByUsername(c echo.Context) error {
 //		//client, err := database.Client()
 //		//client, err := config.NewClient()
