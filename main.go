@@ -68,6 +68,7 @@ func main() {
 	//e.POST("/user", handler.FindUserByUsername(client))
 	//e.POST("/user", )
 	e.POST("/user1", controller.InsertComment)
+	e.Static("/", "static/")
 
 	// Start server
 	e.Logger.Fatal(e.Start(":2022"))
