@@ -148,8 +148,16 @@ func UpdateUserByID(client *ent.Client) echo.HandlerFunc {
 			return err
 		}
 
-		ur, err := client.User.Update().Where(user.IDEQ(u.ID)).
-			SetName(u.Name).
+		us, err := client.User.Query().Where(user.IDEQ(u.ID)).Only(context.Background())
+		if err != nil {
+			log.Fatal("Query user error:", zap.Error(err))
+		}
+		if u.Name != us.Name {
+			log.Fatal("用户名不一致")
+
+		}
+
+		ur, err := client.User.Update().Where(user.IDEQ(u.ID)).Where(user.NameEQ(u.Name)).
 			SetAge(u.Age).
 			SetEmail(u.Email).
 			SetPhone(u.Phone).
