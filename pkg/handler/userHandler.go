@@ -66,6 +66,8 @@ func CreateUser(client *ent.Client) echo.HandlerFunc {
 		return c.NoContent(http.StatusCreated)
 	}
 }
+
+// GetAllUser 获取所有用户
 func GetAllUser(client *ent.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
@@ -84,7 +86,7 @@ func GetAllUser(client *ent.Client) echo.HandlerFunc {
 	}
 }
 
-// 根据用户名查找
+// FindUserByName 根据用户名查找
 func FindUserByName(client *ent.Client) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var u *ent.User
@@ -105,6 +107,38 @@ func FindUserByName(client *ent.Client) echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK, us)
 	}
+}
+
+// DeleteUser 删除用户
+func DeleteUser(client *ent.Client) echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		var u *ent.User
+
+		log, _ := zap.NewDevelopment()
+		if err := json.NewDecoder(c.Request().Body).Decode(&u); err != nil {
+			log.Fatal("json decode error: %v", zap.Error(err))
+			return err
+		}
+
+		// 获取用户基本信息
+		fmt.Println(u.Name)
+		user, err := client.User.Query().Where(user.NameEQ(u.Name)).Only(context.Background())
+		if err != nil {
+			log.Fatal("Failed Querying User: %v", zap.Error(err))
+			return fmt.Errorf("Failed Querying User: %v", err)
+		}
+		err = client.User.DeleteOne(user).Exec(context.Background())
+		if err != nil {
+			log.Fatal("Delete user error:", zap.Error(err))
+			return err
+		}
+		return c.NoContent(http.StatusNoContent)
+
+		return nil
+
+	}
+
 }
 
 //func  (controller *Controller) FindUserByUsername(c echo.Context) error {
