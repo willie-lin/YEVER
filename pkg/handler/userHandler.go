@@ -134,11 +134,7 @@ func DeleteUser(client *ent.Client) echo.HandlerFunc {
 			return err
 		}
 		return c.NoContent(http.StatusNoContent)
-
-		return nil
-
 	}
-
 }
 
 //func  (controller *Controller) FindUserByUsername(c echo.Context) error {
