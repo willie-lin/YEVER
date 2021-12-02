@@ -32,7 +32,7 @@ func (User) Fields() []ent.Field {
 		field.String("password").Sensitive(),
 		field.String("email").MaxLen(120),
 		field.String("phone").MaxLen(13).MinLen(11).Default("12345678910"),
-		field.String("description").NotEmpty().MaxLen(200).Default("other"),
+		field.String("description").MaxLen(2000).Default("others"),
 		field.Time("created").Default(time.Now).Immutable(),
 		field.Time("updated").Default(time.Now).UpdateDefault(time.Now),
 	}

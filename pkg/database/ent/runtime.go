@@ -57,21 +57,7 @@ func init() {
 	// user.DefaultDescription holds the default value on creation for the description field.
 	user.DefaultDescription = userDescDescription.Default.(string)
 	// user.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
-	user.DescriptionValidator = func() func(string) error {
-		validators := userDescDescription.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(description string) error {
-			for _, fn := range fns {
-				if err := fn(description); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
+	user.DescriptionValidator = userDescDescription.Validators[0].(func(string) error)
 	// userDescCreated is the schema descriptor for created field.
 	userDescCreated := userFields[8].Descriptor()
 	// user.DefaultCreated holds the default value on creation for the created field.

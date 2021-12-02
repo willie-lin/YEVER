@@ -137,6 +137,33 @@ func DeleteUser(client *ent.Client) echo.HandlerFunc {
 	}
 }
 
+// UpdateUserByName UpdateUser 更新用户
+func UpdateUserByName(client *ent.Client) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var u *ent.User
+
+		log, _ := zap.NewDevelopment()
+		if err := json.NewDecoder(c.Request().Body).Decode(&u); err != nil {
+			log.Fatal("json decode error: %v", zap.Error(err))
+			return err
+		}
+
+		ur, err := client.User.Update().Where(user.NameEQ(u.Name)).
+			SetAge(u.Age).
+			SetEmail(u.Email).
+			SetPhone(u.Phone).
+			SetDescription(u.Description).Save(context.Background())
+		if err != nil {
+			//panic(err)
+			log.Fatal("Update  error:", zap.Error(err))
+			//fmt.Println("update  err: ", err)
+			return err
+		}
+
+		return c.JSON(http.StatusOK, &ur)
+	}
+}
+
 //func  (controller *Controller) FindUserByUsername(c echo.Context) error {
 //		//client, err := database.Client()
 //		//client, err := config.NewClient()
