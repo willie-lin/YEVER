@@ -65,6 +65,7 @@ func main() {
 	e.GET("/users", handler.GetAllUser(client))
 	e.POST("/user", handler.CreateUser(client))
 	e.GET("/user/id", handler.FindUserByName(client))
+	e.DELETE("/user", handler.DeleteUser(client))
 	//e.POST("/user", handler.FindUserByUsername(client))
 	//e.POST("/user", )
 	e.POST("/user1", controller.InsertComment)
