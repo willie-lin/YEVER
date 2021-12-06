@@ -68,6 +68,7 @@ func main() {
 	e.DELETE("/user", handler.DeleteUser(client))
 	e.PUT("/user/name", handler.UpdateUserByName(client))
 	e.PUT("/user/id", handler.UpdateUserByID(client))
+
 	//e.PATCH("/user", handler.UpdateUser(client))
 	//e.POST("/user", )
 	e.POST("/user1", controller.InsertComment)
