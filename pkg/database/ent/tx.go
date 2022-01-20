@@ -14,8 +14,12 @@ type Tx struct {
 	config
 	// Image is the client for interacting with the Image builders.
 	Image *ImageClient
+	// Quser is the client for interacting with the Quser builders.
+	Quser *QuserClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// Wuser is the client for interacting with the Wuser builders.
+	Wuser *WuserClient
 
 	// lazily loaded.
 	client     *Client
@@ -152,7 +156,9 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Image = NewImageClient(tx.config)
+	tx.Quser = NewQuserClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.Wuser = NewWuserClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

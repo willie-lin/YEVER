@@ -10,7 +10,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/willie-lin/YEVER/pkg/database/ent/predicate"
+	"github.com/willie-lin/YEVER/pkg/database/ent/quser"
 	"github.com/willie-lin/YEVER/pkg/database/ent/user"
+	"github.com/willie-lin/YEVER/pkg/database/ent/wuser"
 
 	"entgo.io/ent"
 )
@@ -25,7 +27,9 @@ const (
 
 	// Node types.
 	TypeImage = "Image"
+	TypeQuser = "Quser"
 	TypeUser  = "User"
+	TypeWuser = "Wuser"
 )
 
 // ImageMutation represents an operation that mutates the Image nodes in the graph.
@@ -256,6 +260,358 @@ func (m *ImageMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ImageMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Image edge %s", name)
+}
+
+// QuserMutation represents an operation that mutates the Quser nodes in the graph.
+type QuserMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *string
+	qq            *string
+	phone         *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Quser, error)
+	predicates    []predicate.Quser
+}
+
+var _ ent.Mutation = (*QuserMutation)(nil)
+
+// quserOption allows management of the mutation configuration using functional options.
+type quserOption func(*QuserMutation)
+
+// newQuserMutation creates new mutation for the Quser entity.
+func newQuserMutation(c config, op Op, opts ...quserOption) *QuserMutation {
+	m := &QuserMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeQuser,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withQuserID sets the ID field of the mutation.
+func withQuserID(id string) quserOption {
+	return func(m *QuserMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Quser
+		)
+		m.oldValue = func(ctx context.Context) (*Quser, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Quser.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withQuser sets the old Quser of the mutation.
+func withQuser(node *Quser) quserOption {
+	return func(m *QuserMutation) {
+		m.oldValue = func(context.Context) (*Quser, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m QuserMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m QuserMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Quser entities.
+func (m *QuserMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *QuserMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetQq sets the "qq" field.
+func (m *QuserMutation) SetQq(s string) {
+	m.qq = &s
+}
+
+// Qq returns the value of the "qq" field in the mutation.
+func (m *QuserMutation) Qq() (r string, exists bool) {
+	v := m.qq
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldQq returns the old "qq" field's value of the Quser entity.
+// If the Quser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QuserMutation) OldQq(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldQq is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldQq requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldQq: %w", err)
+	}
+	return oldValue.Qq, nil
+}
+
+// ResetQq resets all changes to the "qq" field.
+func (m *QuserMutation) ResetQq() {
+	m.qq = nil
+}
+
+// SetPhone sets the "phone" field.
+func (m *QuserMutation) SetPhone(s string) {
+	m.phone = &s
+}
+
+// Phone returns the value of the "phone" field in the mutation.
+func (m *QuserMutation) Phone() (r string, exists bool) {
+	v := m.phone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhone returns the old "phone" field's value of the Quser entity.
+// If the Quser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *QuserMutation) OldPhone(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPhone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPhone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhone: %w", err)
+	}
+	return oldValue.Phone, nil
+}
+
+// ResetPhone resets all changes to the "phone" field.
+func (m *QuserMutation) ResetPhone() {
+	m.phone = nil
+}
+
+// Where appends a list predicates to the QuserMutation builder.
+func (m *QuserMutation) Where(ps ...predicate.Quser) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *QuserMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Quser).
+func (m *QuserMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *QuserMutation) Fields() []string {
+	fields := make([]string, 0, 2)
+	if m.qq != nil {
+		fields = append(fields, quser.FieldQq)
+	}
+	if m.phone != nil {
+		fields = append(fields, quser.FieldPhone)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *QuserMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case quser.FieldQq:
+		return m.Qq()
+	case quser.FieldPhone:
+		return m.Phone()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *QuserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case quser.FieldQq:
+		return m.OldQq(ctx)
+	case quser.FieldPhone:
+		return m.OldPhone(ctx)
+	}
+	return nil, fmt.Errorf("unknown Quser field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *QuserMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case quser.FieldQq:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetQq(v)
+		return nil
+	case quser.FieldPhone:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhone(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Quser field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *QuserMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *QuserMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *QuserMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Quser numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *QuserMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *QuserMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *QuserMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Quser nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *QuserMutation) ResetField(name string) error {
+	switch name {
+	case quser.FieldQq:
+		m.ResetQq()
+		return nil
+	case quser.FieldPhone:
+		m.ResetPhone()
+		return nil
+	}
+	return fmt.Errorf("unknown Quser field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *QuserMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *QuserMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *QuserMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *QuserMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *QuserMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *QuserMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *QuserMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Quser unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *QuserMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Quser edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.
@@ -1022,4 +1378,356 @@ func (m *UserMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *UserMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown User edge %s", name)
+}
+
+// WuserMutation represents an operation that mutates the Wuser nodes in the graph.
+type WuserMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *string
+	phone         *string
+	uid           *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Wuser, error)
+	predicates    []predicate.Wuser
+}
+
+var _ ent.Mutation = (*WuserMutation)(nil)
+
+// wuserOption allows management of the mutation configuration using functional options.
+type wuserOption func(*WuserMutation)
+
+// newWuserMutation creates new mutation for the Wuser entity.
+func newWuserMutation(c config, op Op, opts ...wuserOption) *WuserMutation {
+	m := &WuserMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeWuser,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withWuserID sets the ID field of the mutation.
+func withWuserID(id string) wuserOption {
+	return func(m *WuserMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Wuser
+		)
+		m.oldValue = func(ctx context.Context) (*Wuser, error) {
+			once.Do(func() {
+				if m.done {
+					err = fmt.Errorf("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Wuser.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withWuser sets the old Wuser of the mutation.
+func withWuser(node *Wuser) wuserOption {
+	return func(m *WuserMutation) {
+		m.oldValue = func(context.Context) (*Wuser, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m WuserMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m WuserMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, fmt.Errorf("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Wuser entities.
+func (m *WuserMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *WuserMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// SetPhone sets the "phone" field.
+func (m *WuserMutation) SetPhone(s string) {
+	m.phone = &s
+}
+
+// Phone returns the value of the "phone" field in the mutation.
+func (m *WuserMutation) Phone() (r string, exists bool) {
+	v := m.phone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhone returns the old "phone" field's value of the Wuser entity.
+// If the Wuser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WuserMutation) OldPhone(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldPhone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldPhone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhone: %w", err)
+	}
+	return oldValue.Phone, nil
+}
+
+// ResetPhone resets all changes to the "phone" field.
+func (m *WuserMutation) ResetPhone() {
+	m.phone = nil
+}
+
+// SetUID sets the "uid" field.
+func (m *WuserMutation) SetUID(s string) {
+	m.uid = &s
+}
+
+// UID returns the value of the "uid" field in the mutation.
+func (m *WuserMutation) UID() (r string, exists bool) {
+	v := m.uid
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUID returns the old "uid" field's value of the Wuser entity.
+// If the Wuser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WuserMutation) OldUID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldUID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldUID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUID: %w", err)
+	}
+	return oldValue.UID, nil
+}
+
+// ResetUID resets all changes to the "uid" field.
+func (m *WuserMutation) ResetUID() {
+	m.uid = nil
+}
+
+// Where appends a list predicates to the WuserMutation builder.
+func (m *WuserMutation) Where(ps ...predicate.Wuser) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// Op returns the operation name.
+func (m *WuserMutation) Op() Op {
+	return m.op
+}
+
+// Type returns the node type of this mutation (Wuser).
+func (m *WuserMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *WuserMutation) Fields() []string {
+	fields := make([]string, 0, 2)
+	if m.phone != nil {
+		fields = append(fields, wuser.FieldPhone)
+	}
+	if m.uid != nil {
+		fields = append(fields, wuser.FieldUID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *WuserMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case wuser.FieldPhone:
+		return m.Phone()
+	case wuser.FieldUID:
+		return m.UID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *WuserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case wuser.FieldPhone:
+		return m.OldPhone(ctx)
+	case wuser.FieldUID:
+		return m.OldUID(ctx)
+	}
+	return nil, fmt.Errorf("unknown Wuser field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *WuserMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case wuser.FieldPhone:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhone(v)
+		return nil
+	case wuser.FieldUID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Wuser field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *WuserMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *WuserMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *WuserMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Wuser numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *WuserMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *WuserMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *WuserMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown Wuser nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *WuserMutation) ResetField(name string) error {
+	switch name {
+	case wuser.FieldPhone:
+		m.ResetPhone()
+		return nil
+	case wuser.FieldUID:
+		m.ResetUID()
+		return nil
+	}
+	return fmt.Errorf("unknown Wuser field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *WuserMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *WuserMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *WuserMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *WuserMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *WuserMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *WuserMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *WuserMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Wuser unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *WuserMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Wuser edge %s", name)
 }

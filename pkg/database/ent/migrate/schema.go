@@ -19,6 +19,18 @@ var (
 		Columns:    ImagesColumns,
 		PrimaryKey: []*schema.Column{ImagesColumns[0]},
 	}
+	// QuserColumns holds the columns for the "quser" table.
+	QuserColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "qq", Type: field.TypeString},
+		{Name: "phone", Type: field.TypeString},
+	}
+	// QuserTable holds the schema information for the "quser" table.
+	QuserTable = &schema.Table{
+		Name:       "quser",
+		Columns:    QuserColumns,
+		PrimaryKey: []*schema.Column{QuserColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
@@ -38,10 +50,24 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// WuserColumns holds the columns for the "wuser" table.
+	WuserColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "phone", Type: field.TypeString},
+		{Name: "uid", Type: field.TypeString},
+	}
+	// WuserTable holds the schema information for the "wuser" table.
+	WuserTable = &schema.Table{
+		Name:       "wuser",
+		Columns:    WuserColumns,
+		PrimaryKey: []*schema.Column{WuserColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ImagesTable,
+		QuserTable,
 		UsersTable,
+		WuserTable,
 	}
 )
 
@@ -49,7 +75,13 @@ func init() {
 	ImagesTable.Annotation = &entsql.Annotation{
 		Table: "images",
 	}
+	QuserTable.Annotation = &entsql.Annotation{
+		Table: "quser",
+	}
 	UsersTable.Annotation = &entsql.Annotation{
 		Table: "users",
+	}
+	WuserTable.Annotation = &entsql.Annotation{
+		Table: "wuser",
 	}
 }

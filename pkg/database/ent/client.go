@@ -10,7 +10,9 @@ import (
 	"github.com/willie-lin/YEVER/pkg/database/ent/migrate"
 
 	"github.com/willie-lin/YEVER/pkg/database/ent/image"
+	"github.com/willie-lin/YEVER/pkg/database/ent/quser"
 	"github.com/willie-lin/YEVER/pkg/database/ent/user"
+	"github.com/willie-lin/YEVER/pkg/database/ent/wuser"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -23,8 +25,12 @@ type Client struct {
 	Schema *migrate.Schema
 	// Image is the client for interacting with the Image builders.
 	Image *ImageClient
+	// Quser is the client for interacting with the Quser builders.
+	Quser *QuserClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// Wuser is the client for interacting with the Wuser builders.
+	Wuser *WuserClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -39,7 +45,9 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Image = NewImageClient(c.config)
+	c.Quser = NewQuserClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.Wuser = NewWuserClient(c.config)
 }
 
 // Open opens a database/sql.DB specified by the driver name and
@@ -74,7 +82,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:    ctx,
 		config: cfg,
 		Image:  NewImageClient(cfg),
+		Quser:  NewQuserClient(cfg),
 		User:   NewUserClient(cfg),
+		Wuser:  NewWuserClient(cfg),
 	}, nil
 }
 
@@ -94,7 +104,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		config: cfg,
 		Image:  NewImageClient(cfg),
+		Quser:  NewQuserClient(cfg),
 		User:   NewUserClient(cfg),
+		Wuser:  NewWuserClient(cfg),
 	}, nil
 }
 
@@ -125,7 +137,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	c.Image.Use(hooks...)
+	c.Quser.Use(hooks...)
 	c.User.Use(hooks...)
+	c.Wuser.Use(hooks...)
 }
 
 // ImageClient is a client for the Image schema.
@@ -218,6 +232,96 @@ func (c *ImageClient) Hooks() []Hook {
 	return c.hooks.Image
 }
 
+// QuserClient is a client for the Quser schema.
+type QuserClient struct {
+	config
+}
+
+// NewQuserClient returns a client for the Quser from the given config.
+func NewQuserClient(c config) *QuserClient {
+	return &QuserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `quser.Hooks(f(g(h())))`.
+func (c *QuserClient) Use(hooks ...Hook) {
+	c.hooks.Quser = append(c.hooks.Quser, hooks...)
+}
+
+// Create returns a create builder for Quser.
+func (c *QuserClient) Create() *QuserCreate {
+	mutation := newQuserMutation(c.config, OpCreate)
+	return &QuserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Quser entities.
+func (c *QuserClient) CreateBulk(builders ...*QuserCreate) *QuserCreateBulk {
+	return &QuserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Quser.
+func (c *QuserClient) Update() *QuserUpdate {
+	mutation := newQuserMutation(c.config, OpUpdate)
+	return &QuserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *QuserClient) UpdateOne(q *Quser) *QuserUpdateOne {
+	mutation := newQuserMutation(c.config, OpUpdateOne, withQuser(q))
+	return &QuserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *QuserClient) UpdateOneID(id string) *QuserUpdateOne {
+	mutation := newQuserMutation(c.config, OpUpdateOne, withQuserID(id))
+	return &QuserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Quser.
+func (c *QuserClient) Delete() *QuserDelete {
+	mutation := newQuserMutation(c.config, OpDelete)
+	return &QuserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *QuserClient) DeleteOne(q *Quser) *QuserDeleteOne {
+	return c.DeleteOneID(q.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *QuserClient) DeleteOneID(id string) *QuserDeleteOne {
+	builder := c.Delete().Where(quser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &QuserDeleteOne{builder}
+}
+
+// Query returns a query builder for Quser.
+func (c *QuserClient) Query() *QuserQuery {
+	return &QuserQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Quser entity by its id.
+func (c *QuserClient) Get(ctx context.Context, id string) (*Quser, error) {
+	return c.Query().Where(quser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *QuserClient) GetX(ctx context.Context, id string) *Quser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *QuserClient) Hooks() []Hook {
+	return c.hooks.Quser
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -306,4 +410,94 @@ func (c *UserClient) GetX(ctx context.Context, id string) *User {
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
+}
+
+// WuserClient is a client for the Wuser schema.
+type WuserClient struct {
+	config
+}
+
+// NewWuserClient returns a client for the Wuser from the given config.
+func NewWuserClient(c config) *WuserClient {
+	return &WuserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `wuser.Hooks(f(g(h())))`.
+func (c *WuserClient) Use(hooks ...Hook) {
+	c.hooks.Wuser = append(c.hooks.Wuser, hooks...)
+}
+
+// Create returns a create builder for Wuser.
+func (c *WuserClient) Create() *WuserCreate {
+	mutation := newWuserMutation(c.config, OpCreate)
+	return &WuserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Wuser entities.
+func (c *WuserClient) CreateBulk(builders ...*WuserCreate) *WuserCreateBulk {
+	return &WuserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Wuser.
+func (c *WuserClient) Update() *WuserUpdate {
+	mutation := newWuserMutation(c.config, OpUpdate)
+	return &WuserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WuserClient) UpdateOne(w *Wuser) *WuserUpdateOne {
+	mutation := newWuserMutation(c.config, OpUpdateOne, withWuser(w))
+	return &WuserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WuserClient) UpdateOneID(id string) *WuserUpdateOne {
+	mutation := newWuserMutation(c.config, OpUpdateOne, withWuserID(id))
+	return &WuserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Wuser.
+func (c *WuserClient) Delete() *WuserDelete {
+	mutation := newWuserMutation(c.config, OpDelete)
+	return &WuserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a delete builder for the given entity.
+func (c *WuserClient) DeleteOne(w *Wuser) *WuserDeleteOne {
+	return c.DeleteOneID(w.ID)
+}
+
+// DeleteOneID returns a delete builder for the given id.
+func (c *WuserClient) DeleteOneID(id string) *WuserDeleteOne {
+	builder := c.Delete().Where(wuser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WuserDeleteOne{builder}
+}
+
+// Query returns a query builder for Wuser.
+func (c *WuserClient) Query() *WuserQuery {
+	return &WuserQuery{
+		config: c.config,
+	}
+}
+
+// Get returns a Wuser entity by its id.
+func (c *WuserClient) Get(ctx context.Context, id string) (*Wuser, error) {
+	return c.Query().Where(wuser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WuserClient) GetX(ctx context.Context, id string) *Wuser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *WuserClient) Hooks() []Hook {
+	return c.hooks.Wuser
 }

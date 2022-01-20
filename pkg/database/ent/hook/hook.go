@@ -22,6 +22,19 @@ func (f ImageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return f(ctx, mv)
 }
 
+// The QuserFunc type is an adapter to allow the use of ordinary
+// function as Quser mutator.
+type QuserFunc func(context.Context, *ent.QuserMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f QuserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.QuserMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.QuserMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary
 // function as User mutator.
 type UserFunc func(context.Context, *ent.UserMutation) (ent.Value, error)
@@ -31,6 +44,19 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	mv, ok := m.(*ent.UserMutation)
 	if !ok {
 		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+	}
+	return f(ctx, mv)
+}
+
+// The WuserFunc type is an adapter to allow the use of ordinary
+// function as Wuser mutator.
+type WuserFunc func(context.Context, *ent.WuserMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WuserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.WuserMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.WuserMutation", m)
 	}
 	return f(ctx, mv)
 }

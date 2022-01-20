@@ -9,5 +9,11 @@ import (
 // Image is the predicate function for image builders.
 type Image func(*sql.Selector)
 
+// Quser is the predicate function for quser builders.
+type Quser func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// Wuser is the predicate function for wuser builders.
+type Wuser func(*sql.Selector)

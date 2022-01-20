@@ -9,7 +9,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/willie-lin/YEVER/pkg/database/ent/image"
+	"github.com/willie-lin/YEVER/pkg/database/ent/quser"
 	"github.com/willie-lin/YEVER/pkg/database/ent/user"
+	"github.com/willie-lin/YEVER/pkg/database/ent/wuser"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -31,7 +33,9 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		image.Table: image.ValidColumn,
+		quser.Table: quser.ValidColumn,
 		user.Table:  user.ValidColumn,
+		wuser.Table: wuser.ValidColumn,
 	}
 	check, ok := checks[table]
 	if !ok {
