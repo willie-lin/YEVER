@@ -108,10 +108,10 @@ func (qc *QuserCreate) ExecX(ctx context.Context) {
 // check runs all checks and user-defined validators on the builder.
 func (qc *QuserCreate) check() error {
 	if _, ok := qc.mutation.Qq(); !ok {
-		return &ValidationError{Name: "qq", err: errors.New(`ent: missing required field "qq"`)}
+		return &ValidationError{Name: "qq", err: errors.New(`ent: missing required field "Quser.qq"`)}
 	}
 	if _, ok := qc.mutation.Phone(); !ok {
-		return &ValidationError{Name: "phone", err: errors.New(`ent: missing required field "phone"`)}
+		return &ValidationError{Name: "phone", err: errors.New(`ent: missing required field "Quser.phone"`)}
 	}
 	return nil
 }
@@ -125,7 +125,11 @@ func (qc *QuserCreate) sqlSave(ctx context.Context) (*Quser, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(string)
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Quser.ID type: %T", _spec.ID.Value)
+		}
 	}
 	return _node, nil
 }

@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
@@ -201,7 +202,7 @@ func (iuo *ImageUpdateOne) sqlSave(ctx context.Context) (_node *Image, err error
 	}
 	id, ok := iuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "ID", err: fmt.Errorf("missing Image.ID for update")}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Image.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := iuo.fields; len(fields) > 0 {

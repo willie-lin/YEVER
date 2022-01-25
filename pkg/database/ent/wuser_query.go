@@ -336,6 +336,10 @@ func (wq *WuserQuery) sqlAll(ctx context.Context) ([]*Wuser, error) {
 
 func (wq *WuserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := wq.querySpec()
+	_spec.Node.Columns = wq.fields
+	if len(wq.fields) > 0 {
+		_spec.Unique = wq.unique != nil && *wq.unique
+	}
 	return sqlgraph.CountNodes(ctx, wq.driver, _spec)
 }
 
@@ -406,6 +410,9 @@ func (wq *WuserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if wq.sql != nil {
 		selector = wq.sql
 		selector.Select(selector.Columns(columns...)...)
+	}
+	if wq.unique != nil && *wq.unique {
+		selector.Distinct()
 	}
 	for _, p := range wq.predicates {
 		p(selector)
@@ -685,9 +692,7 @@ func (wgb *WuserGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range wgb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		for _, c := range aggregation {
-			columns = append(columns, c)
-		}
+		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(wgb.fields...)...)

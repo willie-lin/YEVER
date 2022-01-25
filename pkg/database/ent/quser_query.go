@@ -336,6 +336,10 @@ func (qq *QuserQuery) sqlAll(ctx context.Context) ([]*Quser, error) {
 
 func (qq *QuserQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := qq.querySpec()
+	_spec.Node.Columns = qq.fields
+	if len(qq.fields) > 0 {
+		_spec.Unique = qq.unique != nil && *qq.unique
+	}
 	return sqlgraph.CountNodes(ctx, qq.driver, _spec)
 }
 
@@ -406,6 +410,9 @@ func (qq *QuserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	if qq.sql != nil {
 		selector = qq.sql
 		selector.Select(selector.Columns(columns...)...)
+	}
+	if qq.unique != nil && *qq.unique {
+		selector.Distinct()
 	}
 	for _, p := range qq.predicates {
 		p(selector)
@@ -685,9 +692,7 @@ func (qgb *QuserGroupBy) sqlQuery() *sql.Selector {
 		for _, f := range qgb.fields {
 			columns = append(columns, selector.C(f))
 		}
-		for _, c := range aggregation {
-			columns = append(columns, c)
-		}
+		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
 	return selector.GroupBy(selector.Columns(qgb.fields...)...)

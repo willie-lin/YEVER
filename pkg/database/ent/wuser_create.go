@@ -108,10 +108,10 @@ func (wc *WuserCreate) ExecX(ctx context.Context) {
 // check runs all checks and user-defined validators on the builder.
 func (wc *WuserCreate) check() error {
 	if _, ok := wc.mutation.Phone(); !ok {
-		return &ValidationError{Name: "phone", err: errors.New(`ent: missing required field "phone"`)}
+		return &ValidationError{Name: "phone", err: errors.New(`ent: missing required field "Wuser.phone"`)}
 	}
 	if _, ok := wc.mutation.UID(); !ok {
-		return &ValidationError{Name: "uid", err: errors.New(`ent: missing required field "uid"`)}
+		return &ValidationError{Name: "uid", err: errors.New(`ent: missing required field "Wuser.uid"`)}
 	}
 	return nil
 }
@@ -125,7 +125,11 @@ func (wc *WuserCreate) sqlSave(ctx context.Context) (*Wuser, error) {
 		return nil, err
 	}
 	if _spec.ID.Value != nil {
-		_node.ID = _spec.ID.Value.(string)
+		if id, ok := _spec.ID.Value.(string); ok {
+			_node.ID = id
+		} else {
+			return nil, fmt.Errorf("unexpected Wuser.ID type: %T", _spec.ID.Value)
+		}
 	}
 	return _node, nil
 }
